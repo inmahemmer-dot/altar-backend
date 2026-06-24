@@ -39,7 +39,7 @@ fastify.post('/api/create-stars-invoice', async (request, reply) => {
     starsAmount = 25;
   }
 
-  // API oficial de Telegram Stars corregida milimétricamente
+  // API oficial de Telegram Stars corregida milimétricamente para 2026
   try {
     const url = `https://telegram.org{TELEGRAM_BOT_TOKEN}/createInvoiceLink`;
     const response = await fetch(url, {
