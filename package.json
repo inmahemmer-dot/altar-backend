@@ -1,0 +1,14 @@
+{
+  "name": "altar-backend",
+  "version": "1.0.0",
+  "description": "Backend para Telegram Stars",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "fastify": "^4.20.0",
+    "@fastify/cors": "^8.3.0",
+    "node-fetch": "^2.6.12"
+  }
+}
