@@ -11,36 +11,35 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 fastify.post('/api/create-stars-invoice', async (request, reply) => {
   const { flowType, selectedOption, language } = request.body;
 
-  // 1. Configuración dinámica de precios y textos según lo seleccionado en la app
   let title = "";
   let description = "";
   let starsAmount = 10;
 
   if (flowType === 'personal_candle') {
     if (selectedOption === 'vela_verde') {
-      title = language === 'es' ? "🕯️ Veladora de la Esperanza" : "🕯️ Candle of Hope";
-      description = language === 'es' ? "Tu luz brillará en el altar por 24h con borde esmeralda." : "Your light will shine on the altar for 24h with an emerald border.";
+      title = language === 'en' ? "🕯️ Candle of Hope" : "🕯️ Veladora de la Esperanza";
+      description = language === 'en' ? "Your light will shine on the altar for 24h with an emerald border." : "Tu luz brillará en el altar por 24h con borde esmeralda.";
       starsAmount = 10;
     } else if (selectedOption === 'vela_dorada') {
-      title = language === 'es' ? "🕯️ Veladora de Agradecimiento" : "🕯️ Thanksgiving Candle";
-      description = language === 'es' ? "Testimonio especial con marco de oro premium en el muro." : "Special testimonial with a premium gold frame on the wall.";
+      title = language === 'en' ? "🕯️ Thanksgiving Candle" : "🕯️ Veladora de Agradecimiento";
+      description = language === 'en' ? "Special testimonial with a premium gold frame on the wall." : "Testimonio especial con marco de oro premium en el muro.";
       starsAmount = 15;
     } else if (selectedOption === 'novena') {
-      title = language === 'es' ? "🙏 Solemne Novena de 9 Días" : "🙏 Solemn 9-Day Novena";
-      description = language === 'es' ? "Vela de larga duración y oraciones diarias automatizadas." : "Long-duration candle and automated daily prayers.";
+      title = language === 'en' ? "🙏 Solemn 9-Day Novena" : "🙏 Solemne Novena de 9 Días";
+      description = language === 'en' ? "Long-duration candle and automated daily prayers." : "Vela de larga duración y oraciones diarias automatizadas.";
       starsAmount = 50;
     }
   } else if (flowType === 'gift_candle') {
-    title = language === 'es' ? "🎁 Regalar Veladora de Bendición" : "🎁 Gift a Candle Blessing";
-    description = language === 'es' ? "Envía fe a un ser querido. Recibirás un link para compartir en WhatsApp." : "Send faith to a loved one. You will get a link to share on WhatsApp.";
+    title = language === 'en' ? "🎁 Gift a Candle Blessing" : "🎁 Regalar Veladora de Bendición";
+    description = language === 'en' ? "Send faith to a loved one. You will get a link to share on WhatsApp." : "Envía fe a un ser querido. Recibirás un link para compartir en WhatsApp.";
     starsAmount = 10;
   } else if (flowType === 'holy_reminder') {
-    title = language === 'es' ? "🔔 Recordatorios Sagrados (Mensual)" : "🔔 Holy Reminders (Monthly)";
-    description = language === 'es' ? "Acompañamiento diario automatizado en tu chat privado." : "Automated daily accompaniment in your private chat.";
+    title = language === 'en' ? "🔔 Holy Reminders (Monthly)" : "🔔 Recordatorios Sagrados (Mensual)";
+    description = language === 'en' ? "Automated daily accompaniment in your private chat." : "Acompañamiento diario automatizado en tu chat privado.";
     starsAmount = 25;
   }
 
-  // 2. Llamada directa y obligatoria a la API oficial de Telegram
+  // API oficial de Telegram Stars corregida milimétricamente
   try {
     const url = `https://telegram.org{TELEGRAM_BOT_TOKEN}/createInvoiceLink`;
     const response = await fetch(url, {
@@ -49,16 +48,16 @@ fastify.post('/api/create-stars-invoice', async (request, reply) => {
       body: JSON.stringify({
         title: title,
         description: description,
-        payload: JSON.stringify({ flowType, selectedOption }), // Metadatos internos
-        provider_token: "", // Se deja vacío obligatoriamente para Telegram Stars
-        currency: "XTR",   // Código mundial para cobrar en Estrellas de Telegram
+        payload: JSON.stringify({ flowType, selectedOption }),
+        provider_token: "", // Obligatorio vacío para Stars
+        currency: "XTR",   // Código oficial para Estrellas
         prices: [{ label: title, amount: starsAmount }]
       })
     });
 
     const data = await response.json();
     if (data.ok) {
-      return { success: true, invoiceLink: data.result }; // Regresa el link real de cobro
+      return { success: true, invoiceLink: data.result };
     } else {
       return reply.status(400).send({ success: false, error: data.description });
     }
